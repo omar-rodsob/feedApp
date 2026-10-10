@@ -1,0 +1,82 @@
+import { BrowserWindow, dialog } from 'electron';
+import type { OpenDialogOptions } from 'electron';
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import type { MusicDirectoryListing } from '../shared/types';
+
+function libraryPath(userDataPath: string): string {
+  return path.join(userDataPath, 'music-library.json');
+}
+
+function readMusicRoot(userDataPath: string): string | null {
+  try {
+    const value = JSON.parse(fs.readFileSync(libraryPath(userDataPath), 'utf8')) as { root?: unknown };
+    return typeof value.root === 'string' ? value.root : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveMusicRoot(userDataPath: string, root: string): void {
+  fs.mkdirSync(userDataPath, { recursive: true });
+  fs.writeFileSync(libraryPath(userDataPath), JSON.stringify({ root }, null, 2));
+}
+
+export async function chooseMusicFolder(userDataPath: string): Promise<MusicDirectoryListing | null> {
+  const options: OpenDialogOptions = {
+    title: 'Choose your music folder',
+    properties: ['openDirectory']
+  };
+  const focusedWindow = BrowserWindow.getFocusedWindow();
+  const result = focusedWindow
+    ? await dialog.showOpenDialog(focusedWindow, options)
+    : await dialog.showOpenDialog(options);
+  if (result.canceled || !result.filePaths[0]) return null;
+  const root = await fs.promises.realpath(result.filePaths[0]);
+  saveMusicRoot(userDataPath, root);
+  return browseMusicFolder(userDataPath, '');
+}
+
+export async function browseMusicFolder(
+  userDataPath: string,
+  relativePath: unknown
+): Promise<MusicDirectoryListing> {
+  const selectedRoot = readMusicRoot(userDataPath);
+  if (!selectedRoot) throw new Error('Choose a music folder first');
+  const root = await fs.promises.realpath(selectedRoot);
+  const requested = typeof relativePath === 'string' ? relativePath : '';
+  const target = path.resolve(root, requested);
+  const relative = path.relative(root, target);
+  if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    throw new Error('Folder is outside the selected music library');
+  }
+  const actual = await fs.promises.realpath(target);
+  const actualRelative = path.relative(root, actual);
+  if (actualRelative === '..' || actualRelative.startsWith(`..${path.sep}`) || path.isAbsolute(actualRelative)) {
+    throw new Error('Folder is outside the selected music library');
+  }
+
+  const entries = await fs.promises.readdir(actual, { withFileTypes: true });
+  const folders = entries.filter(entry => entry.isDirectory()).map(entry => ({
+    name: entry.name,
+    relativePath: path.posix.join(relative.split(path.sep).join('/'), entry.name)
+  })).sort((first, second) => first.name.localeCompare(second.name));
+  const playableExtensions = new Set(['.mp3', '.m4a', '.aac', '.ogg', '.opus', '.wav', '.flac']);
+  const tracks = entries.filter(entry => entry.isFile() && playableExtensions.has(path.extname(entry.name).toLowerCase()))
+    .map(entry => {
+      const absolutePath = path.join(actual, entry.name);
+      return {
+        name: entry.name,
+        relativePath: path.posix.join(relative.split(path.sep).join('/'), entry.name),
+        source: pathToFileURL(absolutePath).href
+      };
+    }).sort((first, second) => first.name.localeCompare(second.name));
+
+  return {
+    rootName: path.basename(root) || root,
+    currentPath: relative.split(path.sep).join('/'),
+    folders,
+    tracks
+  };
+}
