@@ -20,10 +20,10 @@ Install a supported Node.js LTS release and npm if they are not already installe
 
 ```bash
 npm ci
-npm start
+npm start -- --kiosk
 ```
 
-`npm start` builds the TypeScript and renderer bundle, then launches Electron. Run it from the Pi's desktop session. The first build may take a few minutes on the Pi.
+This builds the TypeScript and renderer bundle, then launches Electron in kiosk mode. Run it from the Pi's desktop session. The first build may take a few minutes on the Pi. To launch in a normal window instead, run `npm start`.
 
 To rebuild without launching:
 
