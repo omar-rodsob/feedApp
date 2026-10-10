@@ -1,0 +1,26 @@
+node_modules/
+dist/
+coverage/
+release/
+out/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and tool caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.cache/
+*.tsbuildinfo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE workspace settings
+.idea/

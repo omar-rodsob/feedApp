@@ -1,0 +1,28 @@
+{
+  "weather": {
+    "latitude": 20.72111,
+    "longitude": -103.387426,
+    "locationLabel": "Guadalajara, Jalisco",
+    "refreshHours": 5
+  },
+  "focus": {
+    "completionSound": "",
+    "options": [
+      { "id": "pomodoro", "label": "Pomodoro", "minutes": 25 },
+      { "id": "short-break", "label": "Short break", "minutes": 5 },
+      { "id": "long-break", "label": "Long break", "minutes": 15 }
+    ]
+  },
+  "todo": {
+    "tasks": []
+  },
+  "widgets": [
+    { "id": "clock", "enabled": true, "title": "Clock" },
+    { "id": "focus", "enabled": true, "title": "Focus" },
+    { "id": "weather", "enabled": true, "title": "Weather" },
+    { "id": "feeds", "enabled": true, "title": "Mexico News" },
+    { "id": "sports", "enabled": true, "title": "NFL" },
+    { "id": "todo", "enabled": true, "title": "Today & Upcoming" },
+    { "id": "music", "enabled": true, "title": "Music" }
+  ]
+}

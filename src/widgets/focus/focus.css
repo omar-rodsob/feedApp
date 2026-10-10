@@ -1,0 +1,96 @@
+.focus-widget {
+	min-height: 260px;
+	border-top: 3px solid #6dd6bd;
+}
+
+.focus-kicker {
+	margin: 0 0 4px;
+	color: #6dd6bd;
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+}
+
+.focus-maximize {
+	min-width: 42px;
+	padding: 6px;
+}
+
+.focus-mode-label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: #b6c5cf;
+	font-size: 0.85rem;
+}
+
+.focus-mode {
+	min-height: 38px;
+	max-width: 100%;
+	padding: 6px 30px 6px 10px;
+	border: 1px solid #506273;
+	border-radius: 6px;
+	background: #14212b;
+	color: #f4f7fa;
+	font: inherit;
+}
+
+.focus-clock {
+	align-self: center;
+	color: #f4f7fa;
+	font-size: 3.4rem;
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.focus-status {
+	align-self: center;
+	margin: 0;
+	color: #b6c5cf;
+	font-size: 0.9rem;
+}
+
+.focus-actions {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-top: auto;
+}
+
+.focus-actions .focus-reset {
+	border: 1px solid #506273;
+	background: transparent;
+	color: #f4f7fa;
+}
+
+.focus-widget.maximized {
+	min-height: calc(100vh - 120px);
+}
+
+.focus-widget.maximized .focus-clock {
+	margin: auto 0;
+	font-size: clamp(5rem, 15vh, 10rem);
+}
+
+.focus-complete {
+	animation: focus-finish-blink 800ms steps(2, start) infinite;
+}
+
+.focus-complete .focus-clock,
+.focus-complete .focus-status {
+	color: #f4c36b;
+}
+
+@keyframes focus-finish-blink {
+	to {
+		border-color: #f4c36b;
+		background: #26313a;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.focus-complete {
+		animation-duration: 1600ms;
+	}
+}

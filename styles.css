@@ -1,0 +1,149 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  background: #101820;
+  color: #f4f7fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 280px;
+  min-height: 100vh;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(12px, 3vw, 28px);
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.app-header h1,
+.app-header p,
+.widget h2 {
+  margin: 0;
+}
+
+.app-header p,
+.clock-date, 
+.weather-location,
+.weather-details,
+.weather-updated {
+  color: #b6c5cf;
+}
+
+.widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 16px;
+}
+
+.widget {
+  min-height: 210px;
+  padding: clamp(16px, 3vw, 24px);
+  border: 1px solid #344653;
+  border-radius: 18px;
+  background: #1b2a35;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.widget-heading,
+.weather-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.widget h2 {
+  font-size: 1.15rem;
+}
+
+button {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #6dd6bd;
+  color: #10211d;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.maximize {
+  min-width: 42px;
+  padding: 6px;
+}
+
+.clock-time {
+  margin: auto 0 0;
+  font-size: clamp(3rem, 12vw, 6rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.weather-temperature {
+  font-size: clamp(2.6rem, 9vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.weather-description {
+  font-size: 1.2rem;
+}
+
+.weather-details {
+  line-height: 1.5;
+}
+
+.weather-footer {
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.weather-updated {
+  font-size: 0.85rem;
+}
+
+.widget.maximized {
+  grid-column: 1 / -1;
+  min-height: calc(100vh - 120px);
+}
+
+.widget.maximized .clock-time {
+  font-size: clamp(5rem, 22vw, 12rem);
+}
+
+.widget.maximized .weather-temperature {
+  font-size: clamp(4rem, 18vw, 9rem);
+}
+
+body.has-maximized .widget:not(.maximized) {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

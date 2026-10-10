@@ -1,0 +1,23 @@
+{
+  "name": "feedapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run build && electron .",
+    "build": "tsc -p tsconfig.json && esbuild src/renderer.ts --bundle --platform=browser --format=iife --outfile=dist/renderer.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "electron": "^28.3.3",
+    "esbuild": "^0.25.11",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.11.2"
+  }
+}
