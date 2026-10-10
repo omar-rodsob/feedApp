@@ -42,6 +42,64 @@
 	padding: 7px 13px;
 }
 
+.music-bluetooth-control {
+	position: relative;
+}
+
+.music-bluetooth-toggle {
+	min-height: 40px;
+	padding: 7px 12px;
+	border: 1px solid #506273;
+	background: transparent;
+	color: #e9f1f5;
+}
+
+.music-bluetooth-panel {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	z-index: 2;
+	width: min(340px, calc(100vw - 48px));
+	padding: 12px;
+	border: 1px solid #506273;
+	border-radius: 8px;
+	background: #1b2a35;
+	box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+}
+
+.music-bluetooth-panel[hidden] {
+	display: none;
+}
+
+.music-bluetooth-status {
+	margin: 0 0 9px;
+	color: #b6c5cf;
+	font-size: 0.8rem;
+}
+
+.music-bluetooth-actions {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	gap: 6px;
+}
+
+.music-bluetooth-devices {
+	min-width: 0;
+	min-height: 38px;
+	padding: 4px 7px;
+	border: 1px solid #506273;
+	border-radius: 6px;
+	background: #14212b;
+	color: #f4f7fa;
+	font: inherit;
+	font-size: 0.78rem;
+}
+
+.music-bluetooth-actions button {
+	min-height: 38px;
+	padding: 5px 9px;
+}
+
 .music-browser {
 	display: flex;
 	flex: 1 1 auto;
@@ -301,5 +359,9 @@
 
 	.music-volume-label {
 		width: 80px;
+	}
+
+	.music-bluetooth-panel {
+		right: -52px;
 	}
 }

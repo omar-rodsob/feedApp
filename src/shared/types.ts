@@ -97,6 +97,13 @@ export interface MusicDirectoryListing {
   tracks: MusicTrack[];
 }
 
+export interface BluetoothDevice {
+  address: string;
+  name: string;
+  paired: boolean;
+  connected: boolean;
+}
+
 export interface AppConfig {
   weather: {
     latitude: number;
@@ -118,6 +125,9 @@ export interface WidgetContext {
   saveTodoTasks(tasks: TodoTask[]): Promise<TodoTask[]>;
   chooseMusicFolder(): Promise<MusicDirectoryListing | null>;
   browseMusicFolder(relativePath: string): Promise<MusicDirectoryListing>;
+  getBluetoothDevices(scan?: boolean): Promise<BluetoothDevice[]>;
+  connectBluetooth(address: string): Promise<void>;
+  disconnectBluetooth(address: string): Promise<void>;
   openArticle(url: string): void;
 }
 

@@ -1,4 +1,5 @@
 import type { MusicDirectoryListing, MusicTrack, WidgetConfig, WidgetContext, WidgetModule } from '../../shared/types';
+import { createBluetoothControls } from './BluetoothControls';
 
 const formatTime = (seconds: number): string => {
 	if (!Number.isFinite(seconds)) return '0:00';
@@ -15,6 +16,7 @@ export const MusicWidget: WidgetModule = {
 				<div><p class="music-kicker">LOCAL LIBRARY</p><h2></h2></div>
 			<div class="music-header-actions">
 				<button class="music-maximize" type="button" aria-label="Maximize music" title="Maximize music">⛶</button>
+				<div class="music-bluetooth-slot"></div>
 				<button class="music-select-root" type="button">Choose folder</button>
 			</div>
 			</header>
@@ -30,6 +32,7 @@ export const MusicWidget: WidgetModule = {
 				<audio class="music-audio" preload="metadata"></audio>
 			</footer>`;
 		element.querySelector('h2')!.textContent = config.title;
+		element.querySelector('.music-bluetooth-slot')!.append(createBluetoothControls(context));
 
 		const entries = element.querySelector<HTMLElement>('.music-entries')!;
 		const message = element.querySelector<HTMLElement>('.music-message')!;
