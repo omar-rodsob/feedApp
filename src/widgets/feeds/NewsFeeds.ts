@@ -71,21 +71,6 @@ export const NewsFeeds: WidgetModule = {
 				button.type = 'button';
 				button.setAttribute('aria-label', `Open article: ${item.title}`);
 
-				if (item.imageUrl) {
-					const image = document.createElement('img');
-					image.className = 'news-image';
-					image.src = item.imageUrl;
-					image.alt = '';
-					image.loading = 'lazy';
-					image.addEventListener('error', () => image.remove(), { once: true });
-					button.append(image);
-				} else {
-					const imageFallback = document.createElement('span');
-					imageFallback.className = 'news-image news-image-fallback';
-					imageFallback.textContent = 'MX';
-					button.append(imageFallback);
-				}
-
 				const content = document.createElement('span');
 				content.className = 'news-copy';
 				const title = document.createElement('span');
@@ -93,7 +78,7 @@ export const NewsFeeds: WidgetModule = {
 				title.textContent = item.title;
 				const source = document.createElement('span');
 				source.className = 'news-source';
-				source.textContent = item.source || 'Google News';
+				source.textContent = item.source || 'Independent media';
 				content.append(title, source);
 				button.append(content);
 				button.addEventListener('click', () => context.openArticle(item.link));
