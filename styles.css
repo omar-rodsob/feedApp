@@ -16,7 +16,6 @@ body {
 }
 
 main {
-  max-width: 1100px;
   margin: 0 auto;
   padding: clamp(12px, 3vw, 28px);
 }

@@ -10,32 +10,24 @@ const descriptions: Record<number, string> = {
 };
 
 export const WeatherWidget: WidgetModule = {
-  create(config: WidgetConfig, context: WidgetContext): HTMLElement {
+  create(_config: WidgetConfig, context: WidgetContext): HTMLElement {
     const element = document.createElement('article');
     element.className = 'widget weather-widget';
     element.innerHTML = `
-      <div class="widget-heading">
-        <h2></h2>
-        <button class="maximize" aria-label="Maximize weather">⛶</button>
+      <div class="weather-current">
+        <div class="weather-summary">
+          <div class="weather-location"></div>
+          <div class="weather-description">Loading weather…</div>
+        </div>
+        <div class="weather-temperature">--°</div>
       </div>
-      <div class="weather-location"></div>
-      <div class="weather-temperature">--°</div>
-      <div class="weather-description">Loading weather…</div>
-      <div class="weather-details"></div>
       <div class="weather-footer">
+        <div class="weather-details"></div>
         <span class="weather-updated">Last updated: —</span>
-        <button class="refresh">Refresh</button>
-      </div>`;
+      </div>
+      <button class="refresh" aria-label="Refresh weather">↻</button>`;
 
-    element.querySelector('h2')!.textContent = config.title;
     element.querySelector('.weather-location')!.textContent = context.config.weather.locationLabel;
-
-    element.querySelector('.maximize')!.addEventListener('click', () => {
-      const maximize = !element.classList.contains('maximized');
-      document.querySelectorAll('.widget').forEach(widget => widget.classList.remove('maximized'));
-      document.body.classList.toggle('has-maximized', maximize);
-      if (maximize) element.classList.add('maximized');
-    });
 
     const showWeather = (data: WeatherData): void => {
       const current = data.current;

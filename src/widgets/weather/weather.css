@@ -1,0 +1,68 @@
+.weather-widget {
+	order: -1;
+	grid-column: 1 / -1;
+	min-height: 0;
+	padding: 26px 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 14px;
+    position: relative;
+}
+
+.weather-widget .weather-current,
+.weather-widget .weather-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.weather-widget .weather-temperature {
+	font-size: 2.5rem;
+	flex: 0 0 auto;
+}
+
+.weather-widget .weather-summary {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 6px 14px;
+	min-width: 0;
+}
+
+.weather-widget .weather-description {
+	font-size: 1rem;
+}
+
+.weather-widget .weather-details {
+	line-height: 1.4;
+	min-width: 0;
+}
+
+.weather-widget .weather-footer {
+	margin-top: 0;
+	}
+
+@media (max-width: 560px) {
+	.weather-widget {
+		gap: 12px;
+		padding: 14px 16px;
+	}
+
+	.weather-widget .weather-current,
+	.weather-widget .weather-footer {
+		align-items: flex-start;
+	}
+
+	.weather-widget .weather-updated {
+		text-align: right;
+		flex: 0 1 auto;
+	}
+}
+
+.weather-widget .refresh {
+   position: absolute;
+    right: 20px;
+    top: -20px;
+}
