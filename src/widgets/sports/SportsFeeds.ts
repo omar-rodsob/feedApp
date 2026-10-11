@@ -86,6 +86,14 @@ export const SportsFeeds: WidgetModule = {
 			};
 			addTeam(away, game.awayTeam, game.awayLogo);
 			addTeam(home, game.homeTeam, game.homeLogo);
+			if (game.awayScore !== undefined && game.homeScore !== undefined) {
+				for (const [selector, score] of [['.sports-away', game.awayScore], ['.sports-home', game.homeScore]] as const) {
+					const scoreLabel = document.createElement('strong');
+					scoreLabel.className = 'sports-score';
+					scoreLabel.textContent = score;
+					row.querySelector(selector)!.append(scoreLabel);
+				}
+			}
 			row.querySelector('time')!.textContent = time;
 			row.querySelector('.sports-venue')!.textContent = game.venue;
 			row.querySelector('.sports-status')!.textContent = game.status;

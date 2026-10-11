@@ -41,6 +41,8 @@ export interface SportsGame {
   awayTeam: string;
   homeLogo: string;
   awayLogo: string;
+  homeScore?: string;
+  awayScore?: string;
 }
 
 export interface SportsHeadline {

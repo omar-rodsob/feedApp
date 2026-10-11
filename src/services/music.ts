@@ -23,6 +23,19 @@ function saveMusicRoot(userDataPath: string, root: string): void {
   fs.writeFileSync(libraryPath(userDataPath), JSON.stringify({ root }, null, 2));
 }
 
+function clearMusicRoot(userDataPath: string): void {
+  try {
+    fs.unlinkSync(libraryPath(userDataPath));
+  } catch {
+    // Ignore cleanup errors for a stale or missing library file.
+  }
+}
+
+function isMissingMusicPath(error: unknown): boolean {
+  const errno = error as NodeJS.ErrnoException | undefined;
+  return errno?.code === 'ENOENT' || errno?.code === 'ENOTDIR';
+}
+
 export async function chooseMusicFolder(userDataPath: string): Promise<MusicDirectoryListing | null> {
   const options: OpenDialogOptions = {
     title: 'Choose your music folder',
@@ -33,9 +46,17 @@ export async function chooseMusicFolder(userDataPath: string): Promise<MusicDire
     ? await dialog.showOpenDialog(focusedWindow, options)
     : await dialog.showOpenDialog(options);
   if (result.canceled || !result.filePaths[0]) return null;
-  const root = await fs.promises.realpath(result.filePaths[0]);
-  saveMusicRoot(userDataPath, root);
-  return browseMusicFolder(userDataPath, '');
+
+  try {
+    const root = await fs.promises.realpath(result.filePaths[0]);
+    saveMusicRoot(userDataPath, root);
+    return browseMusicFolder(userDataPath, '');
+  } catch (error) {
+    if (isMissingMusicPath(error)) {
+      throw new Error('Music folder is unavailable. The USB drive may be disconnected.');
+    }
+    throw error;
+  }
 }
 
 export async function browseMusicFolder(
@@ -44,14 +65,35 @@ export async function browseMusicFolder(
 ): Promise<MusicDirectoryListing> {
   const selectedRoot = readMusicRoot(userDataPath);
   if (!selectedRoot) throw new Error('Choose a music folder first');
-  const root = await fs.promises.realpath(selectedRoot);
+
+  let root: string;
+  try {
+    root = await fs.promises.realpath(selectedRoot);
+  } catch (error) {
+    if (isMissingMusicPath(error)) {
+      clearMusicRoot(userDataPath);
+      throw new Error('Music folder is unavailable. The USB drive may be disconnected.');
+    }
+    throw error;
+  }
+
   const requested = typeof relativePath === 'string' ? relativePath : '';
   const target = path.resolve(root, requested);
   const relative = path.relative(root, target);
   if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
     throw new Error('Folder is outside the selected music library');
   }
-  const actual = await fs.promises.realpath(target);
+
+  let actual: string;
+  try {
+    actual = await fs.promises.realpath(target);
+  } catch (error) {
+    if (isMissingMusicPath(error)) {
+      throw new Error('Music folder is unavailable. The USB drive may be disconnected.');
+    }
+    throw error;
+  }
+
   const actualRelative = path.relative(root, actual);
   if (actualRelative === '..' || actualRelative.startsWith(`..${path.sep}`) || path.isAbsolute(actualRelative)) {
     throw new Error('Folder is outside the selected music library');

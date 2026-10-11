@@ -95,6 +95,13 @@
 	object-fit: contain;
 }
 
+.sports-score {
+	margin-left: 2px;
+	color: #f4c36b;
+	font-size: 1rem;
+	font-variant-numeric: tabular-nums;
+}
+
 .sports-at {
 	color: #aebdc6;
 	font-size: 0.72rem;

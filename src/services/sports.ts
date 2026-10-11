@@ -64,11 +64,12 @@ export async function getSports(userDataPath: string, force = false): Promise<Sp
         id?: string;
         name?: string;
         date?: string;
-        status?: { type?: { shortDetail?: string } };
+        status?: { type?: { shortDetail?: string; state?: string } };
         competitions?: Array<{
           venue?: { fullName?: string };
           competitors?: Array<{
             homeAway?: string;
+            score?: string;
             team?: { displayName?: string; logo?: string };
           }>;
         }>;
@@ -83,6 +84,7 @@ export async function getSports(userDataPath: string, force = false): Promise<Sp
       const away = competitors.find(team => team.homeAway === 'away');
       if (!event.date || !home || !away) continue;
       const key = dateKey(event.date);
+      const gameHasStarted = ['in', 'post'].includes(event.status?.type?.state ?? '');
       const game: SportsGame = {
         id: event.id ?? `${key}-${event.name ?? 'game'}`,
         name: event.name ?? `${away.team?.displayName ?? 'Away'} at ${home.team?.displayName ?? 'Home'}`,
@@ -92,13 +94,17 @@ export async function getSports(userDataPath: string, force = false): Promise<Sp
         homeTeam: home.team?.displayName ?? 'Home',
         awayTeam: away.team?.displayName ?? 'Away',
         homeLogo: home.team?.logo ?? '',
-        awayLogo: away.team?.logo ?? ''
+        awayLogo: away.team?.logo ?? '',
+        ...(gameHasStarted && home.score !== undefined && { homeScore: home.score }),
+        ...(gameHasStarted && away.score !== undefined && { awayScore: away.score })
       };
       groupedGames.set(key, [...(groupedGames.get(key) ?? []), game]);
     }
 
-    const gameDate = [...groupedGames.keys()].filter(key => key >= todayKey).sort()[0] ?? '';
-    const games = (groupedGames.get(gameDate) ?? []).sort((first, second) => first.date.localeCompare(second.date));
+    const todayGames = groupedGames.get(todayKey) ?? [];
+    const futureGameDays = [...groupedGames.keys()].filter(key => key >= todayKey).sort();
+    const gameDate = todayGames.length ? todayKey : futureGameDays[0] ?? '';
+    const games = (gameDate === todayKey ? todayGames : (groupedGames.get(gameDate) ?? [])).sort((first, second) => first.date.localeCompare(second.date));
     const parsedHeadlines = parser.parse(await headlinesResponse.text()) as {
       rss?: { channel?: { item?: Array<Record<string, unknown>> } };
     };
