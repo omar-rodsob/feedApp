@@ -5,6 +5,7 @@ import { getSports } from './services/sports';
 import { getWeather } from './services/weather';
 import { readTodoTasks, saveTodoTasks } from './services/todo';
 import { browseMusicFolder, chooseMusicFolder } from './services/music';
+import { browseVideoFolder, chooseVideoFolder } from './services/video';
 import { connectBluetooth, disconnectBluetooth, getBluetoothDevices } from './services/bluetooth';
 
 export function registerIpc(config: AppConfig): void {
@@ -25,6 +26,10 @@ export function registerIpc(config: AppConfig): void {
   ipcMain.handle('music:choose-folder', () => chooseMusicFolder(userDataPath));
   ipcMain.handle('music:browse-folder', (_event, relativePath: unknown) =>
     browseMusicFolder(userDataPath, relativePath)
+  );
+  ipcMain.handle('video:choose-folder', () => chooseVideoFolder(userDataPath));
+  ipcMain.handle('video:browse-folder', (_event, relativePath: unknown) =>
+    browseVideoFolder(userDataPath, relativePath)
   );
   ipcMain.handle('bluetooth:devices', (_event, scan: unknown) =>
     getBluetoothDevices(scan === true)

@@ -127,6 +127,8 @@ export interface WidgetContext {
   saveTodoTasks(tasks: TodoTask[]): Promise<TodoTask[]>;
   chooseMusicFolder(): Promise<MusicDirectoryListing | null>;
   browseMusicFolder(relativePath: string): Promise<MusicDirectoryListing>;
+  chooseVideoFolder(): Promise<MusicDirectoryListing | null>;
+  browseVideoFolder(relativePath: string): Promise<MusicDirectoryListing>;
   getBluetoothDevices(scan?: boolean): Promise<BluetoothDevice[]>;
   connectBluetooth(address: string): Promise<void>;
   disconnectBluetooth(address: string): Promise<void>;

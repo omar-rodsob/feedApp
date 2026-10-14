@@ -9,6 +9,8 @@ contextBridge.exposeInMainWorld('feedApp', {
   saveTodoTasks: (tasks: unknown) => ipcRenderer.invoke('todo:save', tasks),
   chooseMusicFolder: () => ipcRenderer.invoke('music:choose-folder'),
   browseMusicFolder: (relativePath: string) => ipcRenderer.invoke('music:browse-folder', relativePath),
+  chooseVideoFolder: () => ipcRenderer.invoke('video:choose-folder'),
+  browseVideoFolder: (relativePath: string) => ipcRenderer.invoke('video:browse-folder', relativePath),
   getBluetoothDevices: (scan = false) => ipcRenderer.invoke('bluetooth:devices', scan),
   connectBluetooth: (address: string) => ipcRenderer.invoke('bluetooth:connect', address),
   disconnectBluetooth: (address: string) => ipcRenderer.invoke('bluetooth:disconnect', address)

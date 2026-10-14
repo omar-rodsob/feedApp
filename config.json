@@ -23,6 +23,8 @@
     { "id": "feeds", "enabled": true, "title": "Mexico News" },
     { "id": "sports", "enabled": true, "title": "NFL" },
     { "id": "todo", "enabled": true, "title": "Today & Upcoming" },
-    { "id": "music", "enabled": true, "title": "Music" }
+    { "id": "music", "enabled": true, "title": "Music" },
+    { "id": "radio", "enabled": true, "title": "Radio" },
+    { "id": "videos", "enabled": true, "title": "Videos" }
   ]
 }

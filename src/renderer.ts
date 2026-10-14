@@ -5,6 +5,8 @@ import { SportsFeeds } from './widgets/sports/SportsFeeds';
 import { WeatherWidget } from './widgets/weather/WeatherWidgets';
 import { TodoWidget } from './widgets/todo/todo';
 import { MusicWidget } from './widgets/music/Music';
+import { RadioWidget } from './widgets/radio/PlayRadio';
+import { VideoWidget } from './widgets/videos/videos';
 import type { AppConfig, BluetoothDevice, MusicDirectoryListing, NewsFeedData, SportsData, TodoTask, WidgetContext, WidgetModule } from './shared/types';
 
 declare global {
@@ -18,6 +20,8 @@ declare global {
       saveTodoTasks(tasks: TodoTask[]): Promise<TodoTask[]>;
       chooseMusicFolder(): Promise<MusicDirectoryListing | null>;
       browseMusicFolder(relativePath: string): Promise<MusicDirectoryListing>;
+      chooseVideoFolder(): Promise<MusicDirectoryListing | null>;
+      browseVideoFolder(relativePath: string): Promise<MusicDirectoryListing>;
       getBluetoothDevices(scan?: boolean): Promise<BluetoothDevice[]>;
       connectBluetooth(address: string): Promise<void>;
       disconnectBluetooth(address: string): Promise<void>;
@@ -32,7 +36,9 @@ const modules: Record<string, WidgetModule> = {
   sports: SportsFeeds,
   weather: WeatherWidget,
   todo: TodoWidget,
-  music: MusicWidget
+  music: MusicWidget,
+  radio: RadioWidget,
+  videos: VideoWidget
 };
 
 async function start(): Promise<void> {
@@ -50,6 +56,8 @@ async function start(): Promise<void> {
     saveTodoTasks: tasks => window.feedApp.saveTodoTasks(tasks),
     chooseMusicFolder: () => window.feedApp.chooseMusicFolder(),
     browseMusicFolder: relativePath => window.feedApp.browseMusicFolder(relativePath),
+    chooseVideoFolder: () => window.feedApp.chooseVideoFolder(),
+    browseVideoFolder: relativePath => window.feedApp.browseVideoFolder(relativePath),
     getBluetoothDevices: scan => window.feedApp.getBluetoothDevices(scan),
     connectBluetooth: address => window.feedApp.connectBluetooth(address),
     disconnectBluetooth: address => window.feedApp.disconnectBluetooth(address),
