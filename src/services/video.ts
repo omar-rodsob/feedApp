@@ -1,8 +1,8 @@
-import { BrowserWindow, dialog } from 'electron';
+import { BrowserWindow, dialog, protocol } from 'electron';
 import type { OpenDialogOptions } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { Readable } from 'node:stream';
 import type { MusicDirectoryListing } from '../shared/types';
 
 function libraryPath(userDataPath: string): string {
@@ -34,6 +34,91 @@ function clearVideoRoot(userDataPath: string): void {
 function isMissingVideoPath(error: unknown): boolean {
   const errno = error as NodeJS.ErrnoException | undefined;
   return errno?.code === 'ENOENT' || errno?.code === 'ENOTDIR';
+}
+
+const videoMimeTypes: Record<string, string> = {
+  '.avi': 'video/x-msvideo',
+  '.flv': 'video/x-flv',
+  '.m4v': 'video/mp4',
+  '.mkv': 'video/x-matroska',
+  '.mov': 'video/quicktime',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.wmv': 'video/x-ms-wmv'
+};
+
+async function serveVideo(userDataPath: string, request: Request): Promise<Response> {
+  const url = new URL(request.url);
+  const token = url.pathname.slice(1);
+  if (url.hostname !== 'library' || !/^[A-Za-z0-9_-]+$/.test(token)) {
+    return new Response('Not found', { status: 404 });
+  }
+
+  const selectedRoot = readVideoRoot(userDataPath);
+  if (!selectedRoot) return new Response('Video library not selected', { status: 404 });
+
+  try {
+    const root = await fs.promises.realpath(selectedRoot);
+    const relativePath = Buffer.from(token, 'base64url').toString('utf8');
+    const target = path.resolve(root, relativePath);
+    const relative = path.relative(root, target);
+    if (!relative || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+      return new Response('Not found', { status: 404 });
+    }
+
+    const actual = await fs.promises.realpath(target);
+    const actualRelative = path.relative(root, actual);
+    if (actualRelative === '..' || actualRelative.startsWith(`..${path.sep}`) || path.isAbsolute(actualRelative)) {
+      return new Response('Not found', { status: 404 });
+    }
+
+    const stats = await fs.promises.stat(actual);
+    if (!stats.isFile()) return new Response('Not found', { status: 404 });
+
+    const headers = new Headers({
+      'Accept-Ranges': 'bytes',
+      'Cache-Control': 'no-store',
+      'Content-Type': videoMimeTypes[path.extname(actual).toLowerCase()] ?? 'application/octet-stream'
+    });
+    const range = request.headers.get('range');
+    let start = 0;
+    let end = stats.size - 1;
+    let status = 200;
+
+    if (range) {
+      const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+      if (!match || (!match[1] && !match[2])) {
+        headers.set('Content-Range', `bytes */${stats.size}`);
+        return new Response(null, { status: 416, headers });
+      }
+      if (match[1]) {
+        start = Number(match[1]);
+        end = match[2] ? Number(match[2]) : end;
+      } else {
+        const suffixLength = Number(match[2]);
+        start = Math.max(stats.size - suffixLength, 0);
+      }
+      if (start >= stats.size || end < start) {
+        headers.set('Content-Range', `bytes */${stats.size}`);
+        return new Response(null, { status: 416, headers });
+      }
+      end = Math.min(end, stats.size - 1);
+      status = 206;
+      headers.set('Content-Range', `bytes ${start}-${end}/${stats.size}`);
+    }
+
+    headers.set('Content-Length', String(end - start + 1));
+    if (request.method === 'HEAD') return new Response(null, { status, headers });
+
+    const body = Readable.toWeb(fs.createReadStream(actual, { start, end })) as ReadableStream<Uint8Array>;
+    return new Response(body, { status, headers });
+  } catch {
+    return new Response('Video unavailable', { status: 404 });
+  }
+}
+
+export function registerVideoProtocol(userDataPath: string): void {
+  protocol.handle('stream', request => serveVideo(userDataPath, request));
 }
 
 export async function chooseVideoFolder(userDataPath: string): Promise<MusicDirectoryListing | null> {
@@ -112,7 +197,7 @@ export async function browseVideoFolder(
       return {
         name: entry.name,
         relativePath: path.posix.join(relative.split(path.sep).join('/'), entry.name),
-        source: pathToFileURL(absolutePath).href
+        source: `stream://library/${Buffer.from(path.relative(root, absolutePath).split(path.sep).join('/')).toString('base64url')}`
       };
     }).sort((first, second) => first.name.localeCompare(second.name));
 

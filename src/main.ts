@@ -1,8 +1,14 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, protocol } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { AppConfig } from './shared/types';
 import { registerIpc } from './ipc';
+import { registerVideoProtocol } from './services/video';
+
+protocol.registerSchemesAsPrivileged([{
+  scheme: 'stream',
+  privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true }
+}]);
 
 const config = JSON.parse(
   fs.readFileSync(path.join(app.getAppPath(), 'config.json'), 'utf8')
@@ -33,6 +39,7 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  registerVideoProtocol(app.getPath('userData'));
   registerIpc(config);
   createWindow();
 
