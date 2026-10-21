@@ -33,6 +33,14 @@ const radioStations: RadioStation[] = [
     category: 'news'
   },
   {
+    id: 'rfi',
+    name: 'RFI',
+    country: 'France',
+    description: 'RFI is a French international radio station.',
+    stream: 'https://rfienespagnol64k.ice.infomaniak.ch/rfienespagnol-64.mp3?dl=1',
+    category: 'news'
+  },
+  {
     id: '181-punk',
     name: '181.FM Punk',
     country: 'United States',
