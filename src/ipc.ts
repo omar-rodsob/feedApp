@@ -7,6 +7,7 @@ import { readTodoTasks, saveTodoTasks } from './services/todo';
 import { browseMusicFolder, chooseMusicFolder } from './services/music';
 import { browseVideoFolder, chooseVideoFolder } from './services/video';
 import { connectBluetooth, disconnectBluetooth, getBluetoothDevices } from './services/bluetooth';
+import { openMediaRequest, readRecentMedia, type MediaRequest } from './services/media';
 
 export function registerIpc(config: AppConfig): void {
   const userDataPath = app.getPath('userData');
@@ -40,4 +41,20 @@ export function registerIpc(config: AppConfig): void {
   ipcMain.handle('bluetooth:disconnect', (_event, address: unknown) =>
     disconnectBluetooth(address)
   );
+  ipcMain.handle('media:open', (_event, request: unknown) => {
+    const payload = typeof request === 'string'
+      ? { url: request }
+      : typeof request === 'object' && request !== null
+        ? request as Partial<MediaRequest>
+        : { url: '' };
+
+    return openMediaRequest({
+      url: typeof payload.url === 'string' ? payload.url : '',
+      title: typeof payload.title === 'string' ? payload.title : undefined,
+      type: typeof payload.type === 'string' ? payload.type as MediaRequest['type'] : undefined,
+      source: typeof payload.source === 'string' ? payload.source as MediaRequest['source'] : undefined,
+      autoPlay: typeof payload.autoPlay === 'boolean' ? payload.autoPlay : undefined
+    });
+  });
+  ipcMain.handle('media:recent', () => readRecentMedia());
 }

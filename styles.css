@@ -60,6 +60,117 @@ main {
   gap: 16px;
 }
 
+.recent-media-panel {
+  margin: 0 0 16px;
+  padding: 0 clamp(12px, 2vw, 18px);
+}
+
+.recent-media-panel h3 {
+  margin: 0 0 8px;
+  color: #b6c5cf;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.recent-media-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.recent-media-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #344653;
+  border-radius: 999px;
+  background: rgba(25, 39, 50, 0.8);
+  color: #f4f7fa;
+  text-align: left;
+  cursor: pointer;
+}
+
+.recent-media-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  background: rgba(109, 214, 189, 0.18);
+  color: #6dd6bd;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.recent-media-label {
+  overflow: hidden;
+  color: #dfeaf0;
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-media-empty {
+  color: #8e9da6;
+  font-size: 0.78rem;
+  list-style: none;
+}
+
+.media-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 78%);
+  padding: 22px;
+}
+
+.media-overlay-shell {
+  display: flex;
+  flex-direction: column;
+  width: min(92vw, 980px);
+  max-height: 86vh;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: #060d12;
+  box-shadow: 0 22px 60px rgb(0 0 0 / 45%);
+  overflow: hidden;
+}
+
+.media-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(18, 29, 36, 0.9);
+}
+
+.media-overlay-shell audio,
+.media-overlay-shell video {
+  width: 100%;
+  background: #000;
+}
+
+.media-close {
+  min-height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: #f4f7fa;
+}
+
 .widgets > .widget.widget-layout-full {
   grid-column: 1 / -1;
 }

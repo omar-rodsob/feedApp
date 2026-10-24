@@ -13,5 +13,8 @@ contextBridge.exposeInMainWorld('feedApp', {
   browseVideoFolder: (relativePath: string) => ipcRenderer.invoke('video:browse-folder', relativePath),
   getBluetoothDevices: (scan = false) => ipcRenderer.invoke('bluetooth:devices', scan),
   connectBluetooth: (address: string) => ipcRenderer.invoke('bluetooth:connect', address),
-  disconnectBluetooth: (address: string) => ipcRenderer.invoke('bluetooth:disconnect', address)
+  disconnectBluetooth: (address: string) => ipcRenderer.invoke('bluetooth:disconnect', address),
+  openMediaRequest: (request: { url: string; title?: string; type?: string; source?: string; autoPlay?: boolean }) =>
+    ipcRenderer.invoke('media:open', request),
+  getRecentMedia: () => ipcRenderer.invoke('media:recent')
 });

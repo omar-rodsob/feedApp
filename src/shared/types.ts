@@ -134,6 +134,8 @@ export interface WidgetContext {
   getBluetoothDevices(scan?: boolean): Promise<BluetoothDevice[]>;
   connectBluetooth(address: string): Promise<void>;
   disconnectBluetooth(address: string): Promise<void>;
+  openMediaRequest(request: { url: string; title?: string; type?: string; source?: string; autoPlay?: boolean }): Promise<{ action: string; url?: string; title?: string; reason?: string }>;
+  getRecentMedia(): Promise<unknown[]>;
   openArticle(url: string): void;
 }
 
