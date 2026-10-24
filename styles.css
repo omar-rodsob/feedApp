@@ -40,6 +40,7 @@ main {
 
 .head-widgets {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   gap: 16px;
 }
@@ -49,10 +50,18 @@ main {
   min-width: 0;
 }
 
+.head-widgets > .widget.widget-layout-full {
+  flex: 0 0 100%;
+}
+
 .widgets {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 16px;
+}
+
+.widgets > .widget.widget-layout-full {
+  grid-column: 1 / -1;
 }
 
 .widget {
@@ -109,4 +118,7 @@ body.has-maximized .widget:not(.maximized) {
     flex-direction: column;
   }
 
+  .head-widgets > .widget.widget-layout-share {
+    flex-basis: 100%;
+  }
 }

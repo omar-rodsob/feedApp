@@ -2,6 +2,7 @@ export interface WidgetConfig {
   id: string;
   enabled: boolean;
   title: string;
+  layout?: 'full' | 'share';
 }
 
 export interface WeatherData {

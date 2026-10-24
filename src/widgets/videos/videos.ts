@@ -9,7 +9,7 @@ export const VideoWidget: WidgetModule = {
         <div><p class="video-kicker">LOCAL VIDEO LIBRARY</p><h2></h2></div>
         <div class="video-header-actions">
           <button class="video-maximize" type="button" aria-label="Maximize video" title="Maximize video">⛶</button>
-          <button class="video-select-root" type="button">Choose folder</button>
+          <button class="video-select-root" type="button" aria-label="Choose video folder" title="Choose video folder">▰</button>
         </div>
       </header>
       <div class="video-browser">
@@ -29,7 +29,7 @@ export const VideoWidget: WidgetModule = {
             <span class="video-track-location">Choose a video to open it full screen</span>
           </div>
         </div>
-        <button class="video-open" type="button">Open full screen</button>
+        <button class="video-open" type="button" aria-label="Open full screen" title="Open full screen">⤢</button>
       </footer>
     `;
 

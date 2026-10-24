@@ -17,7 +17,7 @@ export const MusicWidget: WidgetModule = {
 			<div class="music-header-actions">
 				<button class="music-maximize" type="button" aria-label="Maximize music" title="Maximize music">⛶</button>
 				<div class="music-bluetooth-slot"></div>
-				<button class="music-select-root" type="button">Choose folder</button>
+				<button class="music-select-root" type="button" aria-label="Choose music folder" title="Choose music folder">▰</button>
 			</div>
 			</header>
 			<div class="music-browser">

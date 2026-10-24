@@ -38,8 +38,14 @@
 }
 
 .video-select-root {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
   min-height: 40px;
-  padding: 7px 13px;
+  padding: 0;
+  font-size: 1.1rem;
 }
 
 .video-browser {
@@ -257,6 +263,17 @@
 
 .video-open {
   flex-shrink: 0;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 1px solid #506273;
+  border-radius: 50%;
+  background: transparent;
+  color: #e9f1f5;
+  font-size: 1.2rem;
+  line-height: 1;
 }
 
 .video-fullscreen-overlay {
@@ -325,6 +342,7 @@
   }
 
   .video-open {
-    width: 100%;
+    width: 40px;
+    min-width: 40px;
   }
 }

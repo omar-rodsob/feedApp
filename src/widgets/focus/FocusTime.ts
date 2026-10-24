@@ -20,20 +20,16 @@ export const FocusTime: WidgetModule = {
 				</div>
 				<button class="focus-maximize" type="button" aria-label="Maximize focus timer" title="Maximize focus timer">⛶</button>
 			</div>
-			<label class="focus-mode-label">Session
-				<select class="focus-mode"></select>
-			</label>
 			<output class="focus-clock" aria-live="polite">25:00</output>
-			<p class="focus-status" aria-live="polite">Ready when you are</p>
+			<select class="focus-mode" aria-label="Session duration"></select>
 			<div class="focus-actions">
-				<button class="focus-start" type="button">Start</button>
-				<button class="focus-reset" type="button" aria-label="Reset timer" title="Reset timer">Reset</button>
+				<button class="focus-start" type="button" aria-label="Start timer" title="Start timer">▶</button>
+				<button class="focus-reset" type="button" aria-label="Reset timer" title="Reset timer">↻</button>
 			</div>`;
 		 element.querySelector('h2')!.textContent = config.title;
 
 		const modeSelect = element.querySelector<HTMLSelectElement>('.focus-mode')!;
 		const clock = element.querySelector<HTMLOutputElement>('.focus-clock')!;
-		const status = element.querySelector<HTMLElement>('.focus-status')!;
 		const startButton = element.querySelector<HTMLButtonElement>('.focus-start')!;
 		const resetButton = element.querySelector<HTMLButtonElement>('.focus-reset')!;
 		let remainingSeconds = 0;
@@ -57,13 +53,17 @@ export const FocusTime: WidgetModule = {
 			if (timer !== undefined) window.clearInterval(timer);
 			timer = undefined;
 		};
+		const setStartAction = (icon: string, label: string): void => {
+			startButton.textContent = icon;
+			startButton.setAttribute('aria-label', label);
+			startButton.title = label;
+		};
 		const resetTimer = (): void => {
 			stopTimer();
 			complete = false;
-			element.classList.remove('focus-complete');
+			element.classList.remove('focus-running', 'focus-complete');
 			remainingSeconds = selectedOption().minutes * 60;
-			startButton.textContent = 'Start';
-			status.textContent = 'Ready when you are';
+			setStartAction('▶', 'Start timer');
 			renderTime();
 		};
 
@@ -80,13 +80,13 @@ export const FocusTime: WidgetModule = {
 			if (complete) resetTimer();
 			if (timer !== undefined) {
 				stopTimer();
-				startButton.textContent = 'Resume';
-				status.textContent = 'Paused';
+				element.classList.remove('focus-running');
+				setStartAction('▶', 'Resume timer');
 				return;
 			}
 
-			startButton.textContent = 'Pause';
-			status.textContent = 'Session in progress';
+			element.classList.add('focus-running');
+			setStartAction('Ⅱ', 'Pause timer');
 			timer = window.setInterval(() => {
 				remainingSeconds -= 1;
 				renderTime();
@@ -95,9 +95,9 @@ export const FocusTime: WidgetModule = {
 					remainingSeconds = 0;
 					renderTime();
 					complete = true;
+					element.classList.remove('focus-running');
 					element.classList.add('focus-complete');
-					startButton.textContent = 'Start again';
-					status.textContent = 'Time’s up';
+					setStartAction('▶', 'Start timer again');
 				}
 			}, 1000);
 		});

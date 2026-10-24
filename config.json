@@ -17,16 +17,16 @@
     "tasks": []
   },
   "widgets": [
-    { "id": "focus", "enabled": true, "title": "Focus" },
-    { "id": "feeds", "enabled": true, "title": "Mexico News" },
-    { "id": "sports", "enabled": true, "title": "NFL" },
-    { "id": "todo", "enabled": true, "title": "Today & Upcoming" },
-    { "id": "music", "enabled": true, "title": "Music" },
-    { "id": "radio", "enabled": true, "title": "Radio" },
-    { "id": "videos", "enabled": true, "title": "Videos" }
+    { "id": "focus", "enabled": true, "title": "Focus", "layout": "share" },
+    { "id": "todo", "enabled": true, "title": "Today & Upcoming", "layout": "share" },
+    { "id": "feeds", "enabled": true, "title": "Mexico News", "layout": "share" },    
+    { "id": "radio", "enabled": true, "title": "Radio", "layout": "share" },
+    { "id": "sports", "enabled": true, "title": "NFL", "layout": "full" },
+    { "id": "music", "enabled": true, "title": "Music", "layout": "full" },
+    { "id": "videos", "enabled": true, "title": "Videos", "layout": "full" }
   ],
   "headWidgets": [
-    { "id": "clock", "enabled": true, "title": "Clock" },
-    { "id": "weather", "enabled": true, "title": "Weather" }
+    { "id": "clock", "enabled": true, "title": "Clock", "layout": "share" },
+    { "id": "weather", "enabled": true, "title": "Weather", "layout": "share" }
   ]
 }

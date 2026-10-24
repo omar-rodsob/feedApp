@@ -16,17 +16,11 @@
 	padding: 6px;
 }
 
-.focus-mode-label {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	color: #b6c5cf;
-	font-size: 0.85rem;
-}
-
 .focus-mode {
+	align-self: center;
 	min-height: 38px;
 	max-width: 100%;
+	margin-top: 2px;
 	padding: 6px 30px 6px 10px;
 	border: 1px solid #506273;
 	border-radius: 6px;
@@ -37,11 +31,23 @@
 
 .focus-clock {
 	align-self: center;
+	min-width: 5ch;
+	padding: 12px 18px;
+	border: 1px solid #506273;
+	border-radius: 8px;
+	background: #26313a;
 	color: #f4f7fa;
 	font-size: 3.4rem;
 	font-variant-numeric: tabular-nums;
 	font-weight: 700;
 	line-height: 1;
+	transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.focus-running .focus-clock {
+	border-color: #5aab82;
+	background: #203b31;
+	color: #b8e8cc;
 }
 
 .focus-status {
@@ -56,6 +62,17 @@
 	justify-content: center;
 	gap: 10px;
 	margin-top: auto;
+}
+
+.focus-actions button {
+	display: grid;
+	place-items: center;
+	width: 44px;
+	min-width: 44px;
+	height: 44px;
+	min-height: 44px;
+	padding: 0;
+	font-size: 1.15rem;
 }
 
 .focus-actions .focus-reset {
@@ -74,23 +91,17 @@
 }
 
 .focus-complete {
-	animation: focus-finish-blink 800ms steps(2, start) infinite;
+	border-top-color: #d97868;
 }
 
-.focus-complete .focus-clock,
-.focus-complete .focus-status {
-	color: #f4c36b;
-}
-
-@keyframes focus-finish-blink {
-	to {
-		border-color: #f4c36b;
-		background: #26313a;
-	}
+.focus-complete .focus-clock {
+	border-color: #d97868;
+	background: #482d2b;
+	color: #ffd0c7;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.focus-complete {
-		animation-duration: 1600ms;
+	.focus-clock {
+		transition: none;
 	}
 }

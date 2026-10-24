@@ -93,7 +93,9 @@ async function start(): Promise<void> {
 
     const widgetModule = modules[widgetConfig.id];
     if (widgetModule) {
-      headerContainer.append(widgetModule.create(widgetConfig, context));
+      const widget = widgetModule.create(widgetConfig, context);
+      widget.classList.add(widgetConfig.layout === 'full' ? 'widget-layout-full' : 'widget-layout-share');
+      headerContainer.append(widget);
     }
   }
 
@@ -102,7 +104,9 @@ async function start(): Promise<void> {
 
     const widgetModule = modules[widgetConfig.id];
     if (widgetModule) {
-      container.append(widgetModule.create(widgetConfig, context));
+      const widget = widgetModule.create(widgetConfig, context);
+      widget.classList.add(widgetConfig.layout === 'full' ? 'widget-layout-full' : 'widget-layout-share');
+      container.append(widget);
     }
   }
 }

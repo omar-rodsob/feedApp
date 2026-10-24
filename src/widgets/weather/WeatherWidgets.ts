@@ -9,6 +9,15 @@ const descriptions: Record<number, string> = {
   96: 'Thunderstorm with hail', 99: 'Thunderstorm with hail'
 };
 
+const weatherIcons: Record<number, string> = {
+  0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+  45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️',
+  55: '🌧️', 61: '🌦️', 63: '🌧️', 65: '🌧️',
+  71: '🌨️', 73: '❄️', 75: '❄️', 80: '🌦️',
+  81: '🌧️', 82: '🌧️', 95: '⛈️',
+  96: '⛈️', 99: '⛈️'
+};
+
 export const WeatherWidget: WidgetModule = {
   create(_config: WidgetConfig, context: WidgetContext): HTMLElement {
     const element = document.createElement('article');
@@ -17,25 +26,44 @@ export const WeatherWidget: WidgetModule = {
       <div class="weather-current">
         <div class="weather-summary">
           <div class="weather-location"></div>
-          <div class="weather-description">Loading weather…</div>
+          <div class="weather-description" aria-label="Current weather">☀️</div>
         </div>
         <div class="weather-temperature">--°</div>
       </div>
       <div class="weather-footer">
-        <div class="weather-details"></div>
+        <div class="weather-metrics">
+          <div class="weather-metric weather-feels-like">
+            <span class="weather-metric-icon" aria-hidden="true">🌡</span>
+            <span class="weather-metric-value">--°C</span>
+          </div>
+          <div class="weather-metric weather-humidity">
+            <span class="weather-metric-icon" aria-hidden="true">💧</span>
+            <span class="weather-metric-value">--%</span>
+          </div>
+          <div class="weather-metric weather-wind">
+            <span class="weather-metric-icon" aria-hidden="true">💨</span>
+            <span class="weather-metric-value">-- km/h</span>
+          </div>
+        </div>
       </div>`;
 
     element.querySelector('.weather-location')!.textContent = context.config.weather.locationLabel;
+    const weatherDescription = element.querySelector<HTMLElement>('.weather-description');
 
     const showWeather = (data: WeatherData): void => {
       const current = data.current;
       element.querySelector('.weather-temperature')!.textContent =
         `${Math.round(current.temperature_2m)}°C`;
-      element.querySelector('.weather-description')!.textContent =
-        descriptions[current.weather_code] ?? 'Current conditions';
-      element.querySelector('.weather-details')!.textContent =
-        `Feels like ${Math.round(current.apparent_temperature)}°C · ` +
-        `${current.relative_humidity_2m}% humidity · Wind ${current.wind_speed_10m} km/h`;
+      if (weatherDescription) {
+        weatherDescription.textContent = weatherIcons[current.weather_code] ?? '☀️';
+        weatherDescription.setAttribute('title', descriptions[current.weather_code] ?? 'Current conditions');
+      }
+      element.querySelector('.weather-feels-like .weather-metric-value')!.textContent =
+        `${Math.round(current.apparent_temperature)}°C`;
+      element.querySelector('.weather-humidity .weather-metric-value')!.textContent =
+        `${current.relative_humidity_2m}%`;
+      element.querySelector('.weather-wind .weather-metric-value')!.textContent =
+        `${current.wind_speed_10m} km/h`;
     };
 
     const refresh = async (): Promise<void> => {

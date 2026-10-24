@@ -122,7 +122,7 @@ export const RadioWidget = {
             <span class="radio-station-meta">Nothing is playing right now</span>
           </div>
         </div>
-        <button class="radio-toggle" type="button">Play</button>
+        <button class="radio-toggle" type="button" aria-label="Play radio" title="Play radio">▶</button>
       </footer>
       <audio class="radio-audio" preload="metadata"></audio>
     `;
@@ -140,6 +140,13 @@ export const RadioWidget = {
 
     let currentCategory: RadioCategory = 'news';
     let currentStation: RadioStation | null = null;
+
+    const setToggleState = (playing: boolean): void => {
+      const label = playing ? 'Pause radio' : 'Play radio';
+      toggleButton.textContent = playing ? 'Ⅱ' : '▶';
+      toggleButton.setAttribute('aria-label', label);
+      toggleButton.title = label;
+    };
 
     const updateNowPlaying = (): void => {
       if (!currentStation) {
@@ -213,21 +220,21 @@ export const RadioWidget = {
       }
 
       audio.pause();
-      toggleButton.textContent = 'Play';
+      setToggleState(false);
     });
 
     audio.addEventListener('play', () => {
-      toggleButton.textContent = 'Pause';
+      setToggleState(true);
       if (currentStation) updateNowPlaying();
     });
 
     audio.addEventListener('pause', () => {
-      toggleButton.textContent = 'Play';
+      setToggleState(false);
     });
 
     audio.addEventListener('error', () => {
       stationMeta.textContent = 'This stream is unavailable right now.';
-      toggleButton.textContent = 'Play';
+      setToggleState(false);
     });
 
     maximizeButton.addEventListener('click', () => {

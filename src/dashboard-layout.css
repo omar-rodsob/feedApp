@@ -42,9 +42,8 @@
 	.music-widget {
 		container-name: music-panel;
 		container-type: inline-size;
-		min-height: 0;
-		height: auto;
-		max-height: none;
+		min-height: 380px;
+ 		max-height: min(76vh, 760px);
 	}
 
 	.music-widget .music-entries {
@@ -59,12 +58,12 @@
 			gap: 8px;
 			min-height: 0;
 			flex: 1 1 auto;
-			max-height: min(30vh, 170px);
+			max-height: min(45vh, 216px);
 			overflow-y: auto;
 		}
 
 		.news-item {
-			min-height: 0;
+			min-height: 55px;
 			padding: 8px;
 		}
 

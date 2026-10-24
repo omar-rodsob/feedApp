@@ -1,8 +1,56 @@
 .head-widgets .clock-widget {
-	flex-direction: row;
-    justify-content: space-between;
-    min-height: 0;
-    max-height: none;
-    display: flex;
-    flex: unset;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: baseline;
+  min-height: 0;
+  max-height: none;
+}
+
+
+.clock-widget {
+  gap: 12px;
+}
+
+.clock-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clock-time {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.clock-date {
+  font-size: 0.72rem;
+  color: #b8d0dc;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.clock-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: #dfeaf5;
+}
+
+.clock-zone {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.clock-zone-label {
+  font-weight: 700;
+  color: #b8d0dc;
+}
+
+.clock-zone-time {
+  font-variant-numeric: tabular-nums;
 }
