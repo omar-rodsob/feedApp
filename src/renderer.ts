@@ -164,7 +164,7 @@ async function start(): Promise<void> {
   const recentPanel = document.createElement('aside');
   recentPanel.className = 'recent-media-panel';
   recentPanel.innerHTML = '<h3>Recent media</h3><ul class="recent-media-list"></ul>';
-  headerContainer.insertAdjacentElement('afterend', recentPanel);
+  container.append(recentPanel);
   void renderRecentMedia(recentPanel);
 
   const context: WidgetContext = {
