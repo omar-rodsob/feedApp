@@ -10,10 +10,6 @@
 		padding: 14px;
 	}
 
-	.weather-widget {
-		grid-column: 1 / -1;
-	}
-
 	.news-widget,
 	.sports-widget,
 	.todo-widget,

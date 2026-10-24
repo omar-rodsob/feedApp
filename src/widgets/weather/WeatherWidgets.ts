@@ -23,9 +23,7 @@ export const WeatherWidget: WidgetModule = {
       </div>
       <div class="weather-footer">
         <div class="weather-details"></div>
-        <span class="weather-updated">Last updated: —</span>
-      </div>
-      <button class="refresh" aria-label="Refresh weather">↻</button>`;
+      </div>`;
 
     element.querySelector('.weather-location')!.textContent = context.config.weather.locationLabel;
 
@@ -38,30 +36,16 @@ export const WeatherWidget: WidgetModule = {
       element.querySelector('.weather-details')!.textContent =
         `Feels like ${Math.round(current.apparent_temperature)}°C · ` +
         `${current.relative_humidity_2m}% humidity · Wind ${current.wind_speed_10m} km/h`;
-
-      const updated = new Date(data.fetchedAt).toLocaleString([], {
-        dateStyle: 'short',
-        timeStyle: 'short'
-      });
-      element.querySelector('.weather-updated')!.textContent =
-        `Last updated: ${updated}${data.stale ? ' (offline cache)' : ''}`;
     };
 
-    const refresh = async (force = false): Promise<void> => {
-      const button = element.querySelector<HTMLButtonElement>('.refresh')!;
-      button.disabled = true;
-
+    const refresh = async (): Promise<void> => {
       try {
-        showWeather(await context.getWeather(force));
+        showWeather(await context.getWeather());
       } catch {
         element.querySelector('.weather-description')!.textContent = 'Weather unavailable';
-        element.querySelector('.weather-updated')!.textContent = 'Check your network connection';
-      } finally {
-        button.disabled = false;
       }
     };
 
-    element.querySelector('.refresh')!.addEventListener('click', () => void refresh(true));
     void refresh();
 
     window.setInterval(

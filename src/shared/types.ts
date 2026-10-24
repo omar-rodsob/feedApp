@@ -114,6 +114,7 @@ export interface AppConfig {
     refreshHours: number;
   };
   widgets: WidgetConfig[];
+  headWidgets?: WidgetConfig[];
   focus?: FocusConfig;
   todo?: { tasks: TodoTask[] };
 }

@@ -44,8 +44,10 @@ const modules: Record<string, WidgetModule> = {
 async function start(): Promise<void> {
   const config = await window.feedApp.getConfig();
   const container = document.querySelector<HTMLElement>('#widgets');
+  const headerContainer = document.querySelector<HTMLElement>('#head-widgets');
 
   if (!container) throw new Error('Missing #widgets container');
+  if (!headerContainer) throw new Error('Missing #head-widgets container');
 
   const context: WidgetContext = {
     config,
@@ -85,6 +87,15 @@ async function start(): Promise<void> {
       reader.scrollIntoView({ block: 'start' });
     }
   };
+
+  for (const widgetConfig of config.headWidgets ?? []) {
+    if (!widgetConfig.enabled) continue;
+
+    const widgetModule = modules[widgetConfig.id];
+    if (widgetModule) {
+      headerContainer.append(widgetModule.create(widgetConfig, context));
+    }
+  }
 
   for (const widgetConfig of config.widgets) {
     if (!widgetConfig.enabled) continue;
