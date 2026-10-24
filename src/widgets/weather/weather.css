@@ -60,9 +60,3 @@
 		flex: 0 1 auto;
 	}
 }
-
-.weather-widget .refresh {
-   position: absolute;
-    right: 20px;
-    top: -20px;
-}

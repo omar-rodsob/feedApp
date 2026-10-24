@@ -95,7 +95,7 @@ button:disabled {
 
 .clock-time {
   margin: auto 0 0;
-  font-size: clamp(3rem, 12vw, 6rem);
+  font-size: clamp(2rem, 4vw, 2rem);
   font-weight: 700;
   line-height: 1;
 }

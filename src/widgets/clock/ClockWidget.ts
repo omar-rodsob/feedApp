@@ -5,14 +5,11 @@ export const ClockWidget: WidgetModule = {
     const element = document.createElement('article');
     element.className = 'widget clock-widget';
     element.innerHTML = `
-      <div class="widget-heading">
-        <h2></h2>
-        <button class="maximize" aria-label="Maximize clock">⛶</button>
-      </div>
       <div class="clock-time">--:--</div>
-      <div class="clock-date"></div>`;
+      <div class="clock-date"></div>
+      <button class="maximize" aria-label="Maximize clock">⛶</button>`;
 
-    element.querySelector('h2')!.textContent = config.title;
+    //element.querySelector('h2')!.textContent = config.title;
 
     element.querySelector('.maximize')!.addEventListener('click', () => {
       const maximize = !element.classList.contains('maximized');
