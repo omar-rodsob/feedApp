@@ -1,3 +1,5 @@
+import type { MediaDecision } from '../services/media';
+
 export interface WidgetConfig {
   id: string;
   enabled: boolean;
@@ -129,12 +131,13 @@ export interface WidgetContext {
   saveTodoTasks(tasks: TodoTask[]): Promise<TodoTask[]>;
   chooseMusicFolder(): Promise<MusicDirectoryListing | null>;
   browseMusicFolder(relativePath: string): Promise<MusicDirectoryListing>;
+  getRandomMp3Playlist(): Promise<MusicTrack[]>;
   chooseVideoFolder(): Promise<MusicDirectoryListing | null>;
   browseVideoFolder(relativePath: string): Promise<MusicDirectoryListing>;
   getBluetoothDevices(scan?: boolean): Promise<BluetoothDevice[]>;
   connectBluetooth(address: string): Promise<void>;
   disconnectBluetooth(address: string): Promise<void>;
-  openMediaRequest(request: { url: string; title?: string; type?: string; source?: string; autoPlay?: boolean }): Promise<{ action: string; url?: string; title?: string; reason?: string }>;
+  openMediaRequest(request: { url: string; title?: string; type?: string; source?: string; autoPlay?: boolean }): Promise<MediaDecision>;
   getRecentMedia(): Promise<unknown[]>;
   openArticle(url: string): void;
 }

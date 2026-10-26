@@ -1,16 +1,28 @@
-import { app, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import type { AppConfig } from './shared/types';
 import { getNews } from './services/news';
 import { getSports } from './services/sports';
 import { getWeather } from './services/weather';
 import { readTodoTasks, saveTodoTasks } from './services/todo';
-import { browseMusicFolder, chooseMusicFolder } from './services/music';
+import { browseMusicFolder, chooseMusicFolder, getRandomMp3Playlist } from './services/music';
 import { browseVideoFolder, chooseVideoFolder } from './services/video';
 import { connectBluetooth, disconnectBluetooth, getBluetoothDevices } from './services/bluetooth';
-import { openMediaRequest, readRecentMedia, type MediaRequest } from './services/media';
+import { openMediaRequest, readRecentMedia, type MediaDecision, type MediaRequest } from './services/media';
+import { startMediaHttpServer } from './services/mediaHttp';
 
 export function registerIpc(config: AppConfig): void {
   const userDataPath = app.getPath('userData');
+
+  startMediaHttpServer(async request => {
+    const window = BrowserWindow.getAllWindows().find(candidate => !candidate.isDestroyed());
+    if (!window || window.webContents.isLoadingMainFrame()) {
+      throw new Error('FeedApp window is not ready to receive media requests');
+    }
+
+    const decision: MediaDecision = await openMediaRequest(request);
+    window.webContents.send('media:external-open', decision);
+    return decision;
+  });
 
   ipcMain.handle('config:get', () => config);
   ipcMain.handle('weather:get', (_event, force: unknown) =>
@@ -28,6 +40,7 @@ export function registerIpc(config: AppConfig): void {
   ipcMain.handle('music:browse-folder', (_event, relativePath: unknown) =>
     browseMusicFolder(userDataPath, relativePath)
   );
+  ipcMain.handle('music:random-mp3-playlist', () => getRandomMp3Playlist(userDataPath));
   ipcMain.handle('video:choose-folder', () => chooseVideoFolder(userDataPath));
   ipcMain.handle('video:browse-folder', (_event, relativePath: unknown) =>
     browseVideoFolder(userDataPath, relativePath)

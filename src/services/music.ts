@@ -2,8 +2,9 @@ import { BrowserWindow, dialog } from 'electron';
 import type { OpenDialogOptions } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
+import { randomInt } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
-import type { MusicDirectoryListing } from '../shared/types';
+import type { MusicDirectoryListing, MusicTrack } from '../shared/types';
 
 function libraryPath(userDataPath: string): string {
   return path.join(userDataPath, 'music-library.json');
@@ -121,4 +122,48 @@ export async function browseMusicFolder(
     folders,
     tracks
   };
+}
+
+export async function getRandomMp3Playlist(userDataPath: string): Promise<MusicTrack[]> {
+  const selectedRoot = readMusicRoot(userDataPath);
+  if (!selectedRoot) throw new Error('Choose a music folder first');
+
+  let root: string;
+  try {
+    root = await fs.promises.realpath(selectedRoot);
+  } catch (error) {
+    if (isMissingMusicPath(error)) {
+      clearMusicRoot(userDataPath);
+      throw new Error('Music folder is unavailable. The USB drive may be disconnected.');
+    }
+    throw error;
+  }
+
+  const tracks: MusicTrack[] = [];
+  const folders = [root];
+  while (folders.length > 0) {
+    const folder = folders.pop()!;
+    const entries = await fs.promises.readdir(folder, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const absolutePath = path.join(folder, entry.name);
+      if (entry.isDirectory()) {
+        folders.push(absolutePath);
+      } else if (entry.isFile() && path.extname(entry.name).toLowerCase() === '.mp3') {
+        tracks.push({
+          name: entry.name,
+          relativePath: path.relative(root, absolutePath).split(path.sep).join('/'),
+          source: pathToFileURL(absolutePath).href
+        });
+      }
+    }
+  }
+
+  const playlistSize = Math.min(50, tracks.length);
+  for (let index = 0; index < playlistSize; index += 1) {
+    const randomIndex = index + randomInt(tracks.length - index);
+    [tracks[index], tracks[randomIndex]] = [tracks[randomIndex], tracks[index]];
+  }
+
+  return tracks.slice(0, playlistSize);
 }

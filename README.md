@@ -41,6 +41,8 @@ The task widget lets you create daily, weekly, or monthly routines and one-time 
 
 Connect and mount the USB drive, open the Music widget, and choose the drive's music folder. Browse folders from inside the widget. The selected folder is remembered locally; if the drive mounts at a different path or is disconnected, choose the folder again. Playback depends on the audio formats supported by the installed Electron/Chromium build, so test your collection on the Pi.
 
+Use the shuffle button in the Music widget header to create and start a playlist of up to 50 randomly selected `.mp3` files from the selected library, including its subfolders. If fewer than 50 are available, it plays all found tracks in a randomized order.
+
 ## Development
 
 Requirements: Node.js and npm. From this directory:
@@ -51,6 +53,23 @@ npm start
 ```
 
 The main process and preload bridge are in `src/main.ts` and `src/preload.ts`; renderer widgets are under `src/widgets/`. Generated JavaScript is written to `dist/` and should not be edited directly.
+
+### Open media from another local app
+
+While FeedApp is running, it accepts media-open requests at `http://127.0.0.1:3000/api/media/open`. The endpoint is bound to loopback only and accepts a JSON `POST` with an HTTP(S) media URL:
+
+```bash
+curl -X POST http://127.0.0.1:3000/api/media/open \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://youtu.be/8AhYic8xdzY?si=V5sjYFlMdnYxLDuF",
+    "title": "YouTube test",
+    "type": "video",
+    "source": "youtube"
+  }'
+```
+
+FeedApp routes the request using its existing media handling and returns a JSON decision. Direct audio/video URLs play in the app; YouTube links open externally. The endpoint does not resolve or discover media URLs—the caller must provide the URL. Requests are limited to 16 KB, and only HTTP(S) URLs are accepted.
 
 ## Raspberry Pi packaging roadmap
 

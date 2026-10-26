@@ -15,6 +15,7 @@ export const MusicWidget: WidgetModule = {
 			<header class="widget-heading music-heading">
 				<div><p class="music-kicker">LOCAL LIBRARY</p><h2></h2></div>
 			<div class="music-header-actions">
+				<button class="music-shuffle" type="button" aria-label="Play 50 random MP3s" title="Play 50 random MP3s">🔀</button>
 				<button class="music-maximize" type="button" aria-label="Maximize music" title="Maximize music">⛶</button>
 				<div class="music-bluetooth-slot"></div>
 				<button class="music-select-root" type="button" aria-label="Choose music folder" title="Choose music folder">▰</button>
@@ -49,9 +50,11 @@ export const MusicWidget: WidgetModule = {
 		const location = element.querySelector<HTMLElement>('.music-track-location')!;
 		const previousButton = element.querySelector<HTMLButtonElement>('.music-previous')!;
 		const nextButton = element.querySelector<HTMLButtonElement>('.music-next')!;
+		const shuffleButton = element.querySelector<HTMLButtonElement>('.music-shuffle')!;
 		let listing: MusicDirectoryListing | null = null;
 		let currentTracks: MusicTrack[] = [];
 		let selectedTrack = -1;
+		let selectedSource = '';
 		let originalNextSibling: ChildNode | null = null;
 
 		const setMessage = (text: string): void => {
@@ -63,10 +66,13 @@ export const MusicWidget: WidgetModule = {
 			const track = currentTracks[index];
 			if (!track) return;
 			selectedTrack = index;
+			selectedSource = track.source;
 			audio.src = track.source;
 			title.textContent = track.name.replace(/\.[^.]+$/, '');
-			location.textContent = listing?.currentPath ? `${listing.currentPath}/${track.name}` : track.name;
-			entries.querySelectorAll('.music-track').forEach((row, rowIndex) => row.classList.toggle('is-playing', rowIndex === index));
+			location.textContent = track.relativePath;
+			entries.querySelectorAll<HTMLElement>('.music-track').forEach(row =>
+				row.classList.toggle('is-playing', row.dataset.source === selectedSource)
+			);
 			try {
 				await audio.play();
 			} catch {
@@ -119,9 +125,13 @@ export const MusicWidget: WidgetModule = {
 				const button = document.createElement('button');
 				button.type = 'button';
 				button.className = 'music-entry music-track';
+				button.dataset.source = track.source;
 				button.innerHTML = '<span class="music-entry-icon" aria-hidden="true">♫</span><span class="music-entry-name"></span><span class="music-entry-hint">Audio</span>';
 				button.querySelector('.music-entry-name')!.textContent = track.name;
-				button.addEventListener('click', () => void playTrack(index));
+				button.addEventListener('click', () => {
+					currentTracks = data.tracks;
+					void playTrack(index);
+				});
 				rows.push(button);
 			}
 			entries.replaceChildren(...rows);
@@ -152,7 +162,30 @@ export const MusicWidget: WidgetModule = {
 			}
 		};
 
+		const playRandomPlaylist = async (): Promise<void> => {
+			shuffleButton.disabled = true;
+			setMessage('Finding MP3 files in your library…');
+			try {
+				const playlist = await context.getRandomMp3Playlist();
+				if (playlist.length === 0) {
+					currentTracks = [];
+					selectedTrack = -1;
+					selectedSource = '';
+					setMessage('No MP3 files found in your music library.');
+					return;
+				}
+				currentTracks = playlist;
+				setMessage(`Random playlist ready: ${playlist.length} MP3${playlist.length === 1 ? '' : 's'}.`);
+				await playTrack(0);
+			} catch (error) {
+				setMessage(error instanceof Error ? error.message : 'Could not create the random playlist.');
+			} finally {
+				shuffleButton.disabled = false;
+			}
+		};
+
 		chooseButton.addEventListener('click', () => void chooseFolder());
+		shuffleButton.addEventListener('click', () => void playRandomPlaylist());
 		upButton.addEventListener('click', () => {
 			if (!listing?.currentPath) return;
 			void browse(listing.currentPath.split('/').slice(0, -1).join('/'));

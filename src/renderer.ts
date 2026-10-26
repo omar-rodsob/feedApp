@@ -7,7 +7,8 @@ import { TodoWidget } from './widgets/todo/todo';
 import { MusicWidget } from './widgets/music/Music';
 import { RadioWidget } from './widgets/radio/PlayRadio';
 import { VideoWidget } from './widgets/videos/videos';
-import type { AppConfig, BluetoothDevice, MusicDirectoryListing, NewsFeedData, SportsData, TodoTask, WidgetContext, WidgetModule } from './shared/types';
+import type { MediaDecision } from './services/media';
+import type { AppConfig, BluetoothDevice, MusicDirectoryListing, MusicTrack, NewsFeedData, SportsData, TodoTask, WidgetContext, WidgetModule } from './shared/types';
 
 declare global {
   interface Window {
@@ -20,13 +21,15 @@ declare global {
       saveTodoTasks(tasks: TodoTask[]): Promise<TodoTask[]>;
       chooseMusicFolder(): Promise<MusicDirectoryListing | null>;
       browseMusicFolder(relativePath: string): Promise<MusicDirectoryListing>;
+      getRandomMp3Playlist(): Promise<MusicTrack[]>;
       chooseVideoFolder(): Promise<MusicDirectoryListing | null>;
       browseVideoFolder(relativePath: string): Promise<MusicDirectoryListing>;
       getBluetoothDevices(scan?: boolean): Promise<BluetoothDevice[]>;
       connectBluetooth(address: string): Promise<void>;
       disconnectBluetooth(address: string): Promise<void>;
-      openMediaRequest(request: { url: string; title?: string; type?: string; source?: string; autoPlay?: boolean }): Promise<{ action: string; url?: string; title?: string; reason?: string }>;
+      openMediaRequest(request: { url: string; title?: string; type?: string; source?: string; autoPlay?: boolean }): Promise<MediaDecision>;
       getRecentMedia(): Promise<unknown[]>;
+      onMediaRequest(callback: (decision: MediaDecision) => void): () => void;
     };
   }
 }
@@ -85,6 +88,25 @@ function showMediaOverlay(kind: 'audio' | 'video', source: string, title: string
   document.body.append(overlay);
 }
 
+function presentMediaDecision(decision: MediaDecision): void {
+  if (decision.action === 'play-audio') {
+    showMediaOverlay('audio', decision.url, decision.title ?? 'Audio');
+    return;
+  }
+
+  if (decision.action === 'play-video') {
+    showMediaOverlay('video', decision.url, decision.title ?? 'Video');
+    return;
+  }
+
+  if (decision.action === 'open-external') {
+    window.open(decision.url, '_blank', 'noopener');
+    return;
+  }
+
+  window.alert(decision.reason);
+}
+
 async function replayRecentMedia(item: { url?: string; title?: string; type?: string; source?: string }): Promise<void> {
   const request = {
     url: typeof item.url === 'string' ? item.url : '',
@@ -96,25 +118,7 @@ async function replayRecentMedia(item: { url?: string; title?: string; type?: st
   if (!request.url) return;
 
   const decision = await window.feedApp.openMediaRequest(request);
-
-  if (decision.action === 'play-audio') {
-    showMediaOverlay('audio', decision.url ?? request.url, decision.title ?? request.title ?? 'Audio');
-    return;
-  }
-
-  if (decision.action === 'play-video') {
-    showMediaOverlay('video', decision.url ?? request.url, decision.title ?? request.title ?? 'Video');
-    return;
-  }
-
-  if (decision.action === 'open-external' && decision.url) {
-    window.open(decision.url, '_blank', 'noopener');
-    return;
-  }
-
-  if (decision.action === 'reject') {
-    window.alert(decision.reason ?? 'Unsupported media link');
-  }
+  presentMediaDecision(decision);
 }
 
 async function renderRecentMedia(container: HTMLElement): Promise<void> {
@@ -127,6 +131,8 @@ async function renderRecentMedia(container: HTMLElement): Promise<void> {
     list.innerHTML = '<li class="recent-media-empty">No recent media yet</li>';
     return;
   }
+
+  window.feedApp.onMediaRequest(presentMediaDecision);
 
   list.innerHTML = '';
 
@@ -176,6 +182,7 @@ async function start(): Promise<void> {
     saveTodoTasks: tasks => window.feedApp.saveTodoTasks(tasks),
     chooseMusicFolder: () => window.feedApp.chooseMusicFolder(),
     browseMusicFolder: relativePath => window.feedApp.browseMusicFolder(relativePath),
+    getRandomMp3Playlist: () => window.feedApp.getRandomMp3Playlist(),
     chooseVideoFolder: () => window.feedApp.chooseVideoFolder(),
     browseVideoFolder: relativePath => window.feedApp.browseVideoFolder(relativePath),
     getBluetoothDevices: scan => window.feedApp.getBluetoothDevices(scan),

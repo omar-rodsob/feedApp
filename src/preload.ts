@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { MediaDecision } from './services/media';
 
 contextBridge.exposeInMainWorld('feedApp', {
   getConfig: () => ipcRenderer.invoke('config:get'),
@@ -9,6 +10,7 @@ contextBridge.exposeInMainWorld('feedApp', {
   saveTodoTasks: (tasks: unknown) => ipcRenderer.invoke('todo:save', tasks),
   chooseMusicFolder: () => ipcRenderer.invoke('music:choose-folder'),
   browseMusicFolder: (relativePath: string) => ipcRenderer.invoke('music:browse-folder', relativePath),
+  getRandomMp3Playlist: () => ipcRenderer.invoke('music:random-mp3-playlist'),
   chooseVideoFolder: () => ipcRenderer.invoke('video:choose-folder'),
   browseVideoFolder: (relativePath: string) => ipcRenderer.invoke('video:browse-folder', relativePath),
   getBluetoothDevices: (scan = false) => ipcRenderer.invoke('bluetooth:devices', scan),
@@ -16,5 +18,10 @@ contextBridge.exposeInMainWorld('feedApp', {
   disconnectBluetooth: (address: string) => ipcRenderer.invoke('bluetooth:disconnect', address),
   openMediaRequest: (request: { url: string; title?: string; type?: string; source?: string; autoPlay?: boolean }) =>
     ipcRenderer.invoke('media:open', request),
-  getRecentMedia: () => ipcRenderer.invoke('media:recent')
+  getRecentMedia: () => ipcRenderer.invoke('media:recent'),
+  onMediaRequest: (callback: (decision: MediaDecision) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, decision: MediaDecision): void => callback(decision);
+    ipcRenderer.on('media:external-open', listener);
+    return () => ipcRenderer.removeListener('media:external-open', listener);
+  }
 });
