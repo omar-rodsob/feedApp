@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { MediaDecision, MediaRequest } from './media';
 
-const HOST = '127.0.0.1';
+const HOST = '0.0.0.0';
 const PORT = 3000;
 const MAX_BODY_BYTES = 16 * 1024;
 
